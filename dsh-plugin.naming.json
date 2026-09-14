@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "policy": "dsh-plugin-naming/v1",
+  "plugin": {
+    "namespace": "azazo1",
+    "name": "limit-timeout",
+    "coordinate": "azazo1/limit-timeout",
+    "packageName": "dsh-limit-timeout"
+  },
+  "names": {
+    "pluginNames": ["dsh-limit-timeout"],
+    "loaderIds": ["dsh-limit-timeout"],
+    "services": [],
+    "tools": ["request_wait_extension"],
+    "commands": [],
+    "skills": [],
+    "skillProviders": [],
+    "events": [],
+    "settingsNamespaces": ["dsh-limit-timeout"],
+    "routes": []
+  }
+}

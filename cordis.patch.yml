@@ -1,0 +1,7 @@
+# dsh-limit-timeout bundle patch
+#
+# 把插件行插入 web profile roster: Host 半区 (exports ".") 在 host 进程执行,
+# 浏览器半区 (exports "./client") 在 Web GUI 执行.
+- insert:
+    - id: dsh-limit-timeout
+      name: 'dsh-limit-timeout'

@@ -19,6 +19,7 @@ import { describeWaitBudget } from './limits.ts'
 import { SessionWaitLimits } from './session-limits.ts'
 import { LimitTimeoutSettingsSchema, validateLimitTimeoutSettings } from './settings.ts'
 import { DEFAULT_SETTINGS, PLUGIN_ID, type LimitTimeoutSettings } from './shared.ts'
+import { createSuppressReminderListener } from './suppress.ts'
 
 export const name = PLUGIN_ID
 
@@ -83,6 +84,13 @@ export function apply(ctx: Context): void {
     settings: () => settings,
     sessionLimits,
     log,
+  }))
+
+  // 重复工具调用提醒由别的插件在 post-execute 附加, 这里在进入模型请求前按
+  // 设置过滤掉, 只影响模型看到的内容, 不改写会话日志.
+  ctx.on('agent/pre-step', createSuppressReminderListener({
+    settings: () => settings,
+    log: message => { ctx.logger.debug('%s: %s', PLUGIN_ID, message) },
   }))
 
   ctx.logger.info('%s: host loaded', PLUGIN_ID)

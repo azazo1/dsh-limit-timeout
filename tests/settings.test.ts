@@ -13,11 +13,13 @@ describe('decodeLimitTimeoutSettings', () => {
       hardLimitMs: 90_000,
       allowEscalation: false,
       requireExplicitJobWaitMs: true,
+      suppressRepeatToolReminders: true,
     })).toEqual({
       defaultLimitMs: 30_000,
       hardLimitMs: 90_000,
       allowEscalation: false,
       requireExplicitJobWaitMs: true,
+      suppressRepeatToolReminders: true,
     })
   })
 
@@ -27,12 +29,14 @@ describe('decodeLimitTimeoutSettings', () => {
       hardLimitMs: DEFAULT_HARD_LIMIT_MS,
       allowEscalation: true,
       requireExplicitJobWaitMs: false,
+      suppressRepeatToolReminders: false,
     })
     expect(decodeLimitTimeoutSettings({ defaultLimitMs: 10, allowEscalation: 'yes' })).toEqual({
       defaultLimitMs: DEFAULT_LIMIT_MS,
       hardLimitMs: DEFAULT_HARD_LIMIT_MS,
       allowEscalation: true,
       requireExplicitJobWaitMs: false,
+      suppressRepeatToolReminders: false,
     })
     expect(decodeLimitTimeoutSettings(null)).toBeUndefined()
   })
@@ -46,6 +50,7 @@ describe('validateLimitTimeoutSettings', () => {
         hardLimitMs: 100_000,
         allowEscalation: true,
         requireExplicitJobWaitMs: false,
+        suppressRepeatToolReminders: false,
       })
     }).toThrow(/hardLimitMs/)
   })
@@ -57,6 +62,7 @@ describe('validateLimitTimeoutSettings', () => {
         hardLimitMs: 100_000,
         allowEscalation: true,
         requireExplicitJobWaitMs: false,
+        suppressRepeatToolReminders: false,
       })
     }).not.toThrow()
   })

@@ -17,6 +17,14 @@ export const TITLE_CLASS = 'dsh-lt-title'
 export const DESC_CLASS = 'dsh-lt-desc'
 /** 数字输入框类名. */
 export const INPUT_CLASS = 'dsh-lt-input'
+/** 输入框与其错误提示的容器类名. */
+export const INPUT_COL_CLASS = 'dsh-lt-input-col'
+/** 保存与放弃按钮所在行类名. */
+export const ACTIONS_CLASS = 'dsh-lt-actions'
+/** 次要按钮类名. */
+export const BTN_CLASS = 'dsh-lt-btn'
+/** 主要按钮类名. */
+export const BTN_PRIMARY_CLASS = 'dsh-lt-btn-primary'
 /** 独立设置页容器类名. */
 export const SECTION_CLASS = 'dsh-lt-section'
 /** 独立设置页标题类名. */
@@ -42,6 +50,12 @@ const CSS_TEXT = `
 .${INPUT_CLASS} { width: 132px; height: 36px; box-sizing: border-box; padding: 0 12px; border-radius: 18px; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-module-platform); color: var(--dsw-alias-label-primary); font-size: 13px; text-align: right; }
 .${INPUT_CLASS}:hover { border-color: var(--dsw-alias-label-tertiary); }
 .${INPUT_CLASS}:focus { outline: none; border-color: var(--dsw-alias-brand-primary); }
+.${INPUT_COL_CLASS} { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.${ACTIONS_CLASS} { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 4px 0 0; }
+.${BTN_CLASS} { height: 30px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-module-platform); color: var(--dsw-alias-label-primary); font-size: 13px; cursor: pointer; }
+.${BTN_CLASS}:hover:not(:disabled) { border-color: var(--dsw-alias-brand-primary); }
+.${BTN_CLASS}:disabled { opacity: 0.45; cursor: default; }
+.${BTN_PRIMARY_CLASS} { border-color: var(--dsw-alias-brand-primary); color: var(--dsw-alias-brand-primary); }
 .${SECTION_CLASS} { max-width: 760px; display: flex; flex-direction: column; gap: 12px; }
 .${SECTION_TITLE_CLASS} { margin: 0; font-size: 18px; font-weight: 600; color: var(--dsw-alias-label-primary); }
 .${CARD_CLASS} { display: flex; flex-direction: column; background: var(--dsw-alias-bg-layer-3); border: 1px solid var(--dsw-alias-border-l2); border-radius: 12px; padding: 0 12px; }

@@ -11,12 +11,25 @@ const UNIT_MS: Record<string, number> = {
   h: 3_600_000,
 }
 
-/** 毫秒数的可读形态. */
+/** 毫秒数的中文可读形态, 用在说明文字里. */
 export function formatMsHint(ms: number): string {
   if (ms % 3_600_000 === 0) return `${String(ms / 3_600_000)} 小时`
   if (ms % 60_000 === 0) return `${String(ms / 60_000)} 分钟`
   if (ms % 1_000 === 0) return `${String(ms / 1_000)} 秒`
   return `${String(ms)} 毫秒`
+}
+
+/**
+ * 毫秒数的输入形态: 整小时写 `1h`, 整分钟写 `2m`, 整秒写 `90s`, 否则写 `1500ms`.
+ * 数字字段在未编辑, 保存后与放弃更改后都还原成这种带单位的写法.
+ * @param ms - 毫秒数.
+ * @returns 便于阅读的输入文本.
+ */
+export function formatLimitInput(ms: number): string {
+  if (ms % 3_600_000 === 0) return `${String(ms / 3_600_000)}h`
+  if (ms % 60_000 === 0) return `${String(ms / 60_000)}m`
+  if (ms % 1_000 === 0) return `${String(ms / 1_000)}s`
+  return `${String(ms)}ms`
 }
 
 /** 时长输入的解析结果. */

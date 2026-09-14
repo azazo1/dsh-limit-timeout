@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatMsHint, parseLimitInput } from '../src/client/format.ts'
+import { formatLimitInput, formatMsHint, parseLimitInput } from '../src/client/format.ts'
 
 const MIN = 1_000
 const MAX = 86_400_000
@@ -39,5 +39,20 @@ describe('formatMsHint', () => {
     expect(formatMsHint(120_000)).toBe('2 分钟')
     expect(formatMsHint(90_000)).toBe('90 秒')
     expect(formatMsHint(1_500)).toBe('1500 毫秒')
+  })
+})
+
+describe('formatLimitInput', () => {
+  it('按整小时, 整分钟, 整秒与毫秒还原单位', () => {
+    expect(formatLimitInput(3_600_000)).toBe('1h')
+    expect(formatLimitInput(120_000)).toBe('2m')
+    expect(formatLimitInput(90_000)).toBe('90s')
+    expect(formatLimitInput(1_500)).toBe('1500ms')
+  })
+
+  it('与 parseLimitInput 往返一致', () => {
+    for (const ms of [1_000, 1_500, 90_000, 120_000, 1_800_000, 86_400_000]) {
+      expect(parseLimitInput(formatLimitInput(ms), 1, 86_400_000)).toEqual({ ok: true, value: ms })
+    }
   })
 })

@@ -109,7 +109,7 @@ describe('formatDuration', () => {
 describe('describeWaitBudget', () => {
   it('包含当前上限, 硬天花板与申请方式', () => {
     const text = describeWaitBudget({
-      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: true, requireExplicitJobWaitMs: false },
+      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: true, requireExplicitJobWaitMs: false, suppressRepeatToolReminders: false },
       sessionLimitMs: 120_000,
       raised: false,
     })
@@ -120,14 +120,14 @@ describe('describeWaitBudget', () => {
 
   it('提升后说明提升来源, 并在禁止申请时去掉申请提示', () => {
     const raised = describeWaitBudget({
-      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: true, requireExplicitJobWaitMs: false },
+      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: true, requireExplicitJobWaitMs: false, suppressRepeatToolReminders: false },
       sessionLimitMs: 600_000,
       raised: true,
     })
     expect(raised).toContain('raised this session\'s limit')
 
     const disabled = describeWaitBudget({
-      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: false, requireExplicitJobWaitMs: false },
+      settings: { defaultLimitMs: 120_000, hardLimitMs: 900_000, allowEscalation: false, requireExplicitJobWaitMs: false, suppressRepeatToolReminders: false },
       sessionLimitMs: 120_000,
       raised: false,
     })

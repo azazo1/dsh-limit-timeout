@@ -19,6 +19,9 @@ export const ALLOW_ESCALATION_FIELD = 'allowEscalation'
 /** job_output 的 wait 是否必须显式给出 timeout_ms 的字段名. */
 export const REQUIRE_EXPLICIT_JOB_WAIT_FIELD = 'requireExplicitJobWaitMs'
 
+/** 是否屏蔽重复工具调用提醒注入的字段名. */
+export const SUPPRESS_REPEAT_REMINDER_FIELD = 'suppressRepeatToolReminders'
+
 /** 上限字段允许的最小值 (1 秒): 再小会让工具调用失去意义. */
 export const MIN_LIMIT_MS = 1_000
 
@@ -41,6 +44,8 @@ export interface LimitTimeoutSettings {
   allowEscalation: boolean
   /** 为 true 时 job_output 的 wait 必须显式给出 timeout_ms, 否则拒绝. */
   requireExplicitJobWaitMs: boolean
+  /** 为 true 时从模型请求中移除 repeat-tool-reminder 注入的重复调用提醒. */
+  suppressRepeatToolReminders: boolean
 }
 
 /** 未注册 settings namespace 或用户未保存过时的生效值. */
@@ -49,6 +54,7 @@ export const DEFAULT_SETTINGS: LimitTimeoutSettings = {
   hardLimitMs: DEFAULT_HARD_LIMIT_MS,
   allowEscalation: true,
   requireExplicitJobWaitMs: false,
+  suppressRepeatToolReminders: false,
 }
 
 /** 上限字段的合法取值域 (schemastery schema 与解码共用). */
@@ -70,12 +76,16 @@ export function decodeLimitTimeoutSettings(section: unknown): LimitTimeoutSettin
   const hardLimitMs = record[HARD_LIMIT_FIELD]
   const allowEscalation = record[ALLOW_ESCALATION_FIELD]
   const requireExplicitJobWaitMs = record[REQUIRE_EXPLICIT_JOB_WAIT_FIELD]
+  const suppressRepeatToolReminders = record[SUPPRESS_REPEAT_REMINDER_FIELD]
   return {
     defaultLimitMs: isValidLimit(defaultLimitMs) ? defaultLimitMs : DEFAULT_LIMIT_MS,
     hardLimitMs: isValidLimit(hardLimitMs) ? hardLimitMs : DEFAULT_HARD_LIMIT_MS,
     allowEscalation: typeof allowEscalation === 'boolean' ? allowEscalation : true,
     requireExplicitJobWaitMs: typeof requireExplicitJobWaitMs === 'boolean'
       ? requireExplicitJobWaitMs
+      : false,
+    suppressRepeatToolReminders: typeof suppressRepeatToolReminders === 'boolean'
+      ? suppressRepeatToolReminders
       : false,
   }
 }

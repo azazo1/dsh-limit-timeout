@@ -14,6 +14,7 @@ import {
   MAX_LIMIT_MS,
   MIN_LIMIT_MS,
   REQUIRE_EXPLICIT_JOB_WAIT_FIELD,
+  SUPPRESS_REPEAT_REMINDER_FIELD,
   type LimitTimeoutSettings,
 } from './shared.ts'
 
@@ -23,6 +24,7 @@ export const LimitTimeoutSettingsSchema: z<LimitTimeoutSettings> = z.object({
   [HARD_LIMIT_FIELD]: z.number().step(1).min(MIN_LIMIT_MS).max(MAX_LIMIT_MS).default(DEFAULT_HARD_LIMIT_MS),
   [ALLOW_ESCALATION_FIELD]: z.boolean().default(true),
   [REQUIRE_EXPLICIT_JOB_WAIT_FIELD]: z.boolean().default(false),
+  [SUPPRESS_REPEAT_REMINDER_FIELD]: z.boolean().default(false),
 })
 
 /**

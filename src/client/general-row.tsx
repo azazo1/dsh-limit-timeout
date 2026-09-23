@@ -4,7 +4,7 @@
  * @module dsh-limit-timeout/client/general-row
  */
 
-import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { ConfigForm as SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
 import { DEFAULT_LIMIT_FIELD, type LimitTimeoutSettings } from '../shared.ts'
 import { DurationInput } from './duration-input.tsx'
 import { formatMsHint } from './format.ts'

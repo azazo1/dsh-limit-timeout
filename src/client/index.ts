@@ -10,15 +10,15 @@
 
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
-import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { ConfigForm as SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import { decodeLimitTimeoutSettings, PLUGIN_ID, type LimitTimeoutSettings } from '../shared.ts'
+import { PLUGIN_ID, type LimitTimeoutSettings } from '../shared.ts'
 import { GeneralLimitRow, type GeneralLimitRowProps } from './general-row.tsx'
 import { LimitTimeoutSection, type LimitTimeoutSectionProps } from './settings-page.tsx'
 import { installStyles } from './styles.ts'
 
-/** 页面依赖的服务: settingsScope 提供配置通道, slots 提供注册面. */
-export const inject = ['settingsScope', 'slots']
+/** 页面依赖的服务: configForms 提供配置通道, slots 提供注册面. */
+export const inject = ['configForms', 'slots']
 
 /**
  * 绑定 settings namespace 并注册两个设置界面入口.
@@ -26,10 +26,7 @@ export const inject = ['settingsScope', 'slots']
  */
 export function apply(ctx: ClientContext): void {
   installStyles()
-  const scope = ctx.settingsScope.bind<LimitTimeoutSettings>({
-    namespace: PLUGIN_ID,
-    decode: decodeLimitTimeoutSettings,
-  })
+  const scope = ctx.configForms.get<LimitTimeoutSettings>(PLUGIN_ID)
 
   ctx.slots.inject('settings.general.item', () => ctx.slots.register(
     {

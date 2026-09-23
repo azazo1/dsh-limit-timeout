@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS, type LimitTimeoutSettings } from '../src/shared.ts'
 import {
   createSuppressReminderListener,
   isRepeatReminder,
-  REPEAT_REMINDER_PLUGIN,
+  REPEAT_REMINDER_SOURCE_KIND,
 } from '../src/suppress.ts'
 
 /** 构造只带 source 的消息替身. */
@@ -13,8 +13,8 @@ function message(source: UserMessage['source']): UserMessage {
   return { source } as unknown as UserMessage
 }
 
-const reminder = message({ kind: 'plugin', plugin: REPEAT_REMINDER_PLUGIN })
-const otherPlugin = message({ kind: 'plugin', plugin: 'some-other-plugin' })
+const reminder = message({ kind: REPEAT_REMINDER_SOURCE_KIND } as unknown as UserMessage['source'])
+const otherPlugin = message({ kind: 'some-other-plugin' } as unknown as UserMessage['source'])
 const userMessage = message({ kind: 'user' })
 
 const payload = { agent: { id: 'session-1' }, messages: [reminder, userMessage] } as unknown as never

@@ -7,7 +7,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import type { SettingsPathOpView } from '@deepseek-ai/dsh-api-remotes/client'
-import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { ConfigForm as SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
 import {
   ALLOW_ESCALATION_FIELD,
   DEFAULT_LIMIT_FIELD,
@@ -194,7 +194,11 @@ export function useSettingsDraft(scope: SettingsScope<LimitTimeoutSettings>): Se
     }
     setStatus({ kind: 'saving' })
     void scope.mutate(plan.ops)
-      .then(() => {
+      .then((accepted) => {
+        if (!accepted) {
+          setStatus({ kind: 'error', message: '配置写入被拒绝' })
+          return
+        }
         setStatus({ kind: 'saved' })
         // 保存后把数字还原成合适的单位写法.
         setDraft(plan.normalized)

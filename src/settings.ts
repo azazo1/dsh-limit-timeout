@@ -1,9 +1,10 @@
 /**
- * Host 侧 settings namespace 定义. 设置页保存的值经此 schema 校验与持久化,
- * 插件运行时通过注册返回的 scope 读取并监听变化.
+ * Host 侧插件配置 schema. 0.1.7 的 settings 页面直接投影当前插件 Config,
+ * 运行时通过 volatile 引用读取实时值.
  * @module dsh-limit-timeout/settings
  */
 
+import type { Volatile } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
 import {
   ALLOW_ESCALATION_FIELD,
@@ -18,13 +19,22 @@ import {
   type LimitTimeoutSettings,
 } from './shared.ts'
 
-/** settings namespace 的字段 schema. */
-export const LimitTimeoutSettingsSchema: z<LimitTimeoutSettings> = z.object({
-  [DEFAULT_LIMIT_FIELD]: z.number().step(1).min(MIN_LIMIT_MS).max(MAX_LIMIT_MS).default(DEFAULT_LIMIT_MS),
-  [HARD_LIMIT_FIELD]: z.number().step(1).min(MIN_LIMIT_MS).max(MAX_LIMIT_MS).default(DEFAULT_HARD_LIMIT_MS),
-  [ALLOW_ESCALATION_FIELD]: z.boolean().default(true),
-  [REQUIRE_EXPLICIT_JOB_WAIT_FIELD]: z.boolean().default(false),
-  [SUPPRESS_REPEAT_REMINDER_FIELD]: z.boolean().default(false),
+/** Loader 投影到 settings 页面的实时配置引用. */
+export interface LimitTimeoutConfig {
+  defaultLimitMs: Volatile<number>
+  hardLimitMs: Volatile<number>
+  allowEscalation: Volatile<boolean>
+  requireExplicitJobWaitMs: Volatile<boolean>
+  suppressRepeatToolReminders: Volatile<boolean>
+}
+
+/** 插件配置 schema. */
+export const Config = z.object({
+  [DEFAULT_LIMIT_FIELD]: z.number().step(1).min(MIN_LIMIT_MS).max(MAX_LIMIT_MS).default(DEFAULT_LIMIT_MS).volatile(),
+  [HARD_LIMIT_FIELD]: z.number().step(1).min(MIN_LIMIT_MS).max(MAX_LIMIT_MS).default(DEFAULT_HARD_LIMIT_MS).volatile(),
+  [ALLOW_ESCALATION_FIELD]: z.boolean().default(true).volatile(),
+  [REQUIRE_EXPLICIT_JOB_WAIT_FIELD]: z.boolean().default(false).volatile(),
+  [SUPPRESS_REPEAT_REMINDER_FIELD]: z.boolean().default(false).volatile(),
 })
 
 /**

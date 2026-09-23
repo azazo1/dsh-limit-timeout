@@ -12,8 +12,8 @@ import type { Agent, PreStepDecision } from '@deepseek-ai/dsh-agent'
 import type { UserMessage } from '@deepseek-ai/dsh-session'
 import type { LimitTimeoutSettings } from './shared.ts'
 
-/** 重复调用提醒注入消息时使用的 plugin 标识. */
-export const REPEAT_REMINDER_PLUGIN = 'repeat-tool-reminder'
+/** 重复调用提醒注入消息使用的事件 source kind. */
+export const REPEAT_REMINDER_SOURCE_KIND = 'repeat-tool-reminder'
 
 /**
  * 判断一条消息是否来自重复调用提醒.
@@ -21,8 +21,7 @@ export const REPEAT_REMINDER_PLUGIN = 'repeat-tool-reminder'
  * @returns 是提醒消息时为 true.
  */
 export function isRepeatReminder(message: UserMessage): boolean {
-  const source = message.source
-  return source.kind === 'plugin' && source.plugin === REPEAT_REMINDER_PLUGIN
+  return String(message.source.kind) === REPEAT_REMINDER_SOURCE_KIND
 }
 
 /** 监听器依赖. */

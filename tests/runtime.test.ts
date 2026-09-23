@@ -3,6 +3,21 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { PreToolDecision, ToolDefinition, ToolExecution } from '@deepseek-ai/dsh-tools'
 import { apply, name } from '../src/index.ts'
 import { REQUEST_WAIT_EXTENSION_TOOL } from '../src/extension-tool.ts'
+import { DEFAULT_SETTINGS, type LimitTimeoutSettings } from '../src/shared.ts'
+
+type Ref<T> = { get(): T }
+
+function config(overrides: Partial<LimitTimeoutSettings> = {}) {
+  const value = { ...DEFAULT_SETTINGS, ...overrides }
+  const ref = <T>(current: T): Ref<T> => ({ get: () => current })
+  return {
+    defaultLimitMs: ref(value.defaultLimitMs),
+    hardLimitMs: ref(value.hardLimitMs),
+    allowEscalation: ref(value.allowEscalation),
+    requireExplicitJobWaitMs: ref(value.requireExplicitJobWaitMs),
+    suppressRepeatToolReminders: ref(value.suppressRepeatToolReminders),
+  }
+}
 
 /** pre-execute 监听器形状. */
 type PreExecuteListener = (
@@ -55,16 +70,16 @@ function bashExecution(timeoutMs: number): ToolExecution {
 describe('apply', () => {
   it('导出插件名并注册申请工具与两个策略监听器', () => {
     const stub = stubContext()
-    apply(stub.ctx)
+    apply(stub.ctx, config())
     expect(name).toBe('dsh-limit-timeout')
     expect(stub.tools.map(tool => tool.name)).toContain(REQUEST_WAIT_EXTENSION_TOOL)
     expect(stub.listeners['tools/pre-execute']).toHaveLength(1)
     expect(stub.listeners['agent/pre-step']).toHaveLength(1)
   })
 
-  it('缺少 settings 服务时使用默认上限拦截超限调用', async () => {
+  it('未覆盖配置时使用默认上限拦截超限调用', async () => {
     const stub = stubContext()
-    apply(stub.ctx)
+    apply(stub.ctx, config())
     const listener = stub.listeners['tools/pre-execute'][0] as unknown as PreExecuteListener
 
     const denied = await listener(bashExecution(600_000), () => Promise.resolve({ kind: 'allow' }))

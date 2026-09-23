@@ -17,8 +17,10 @@ import { createRequestWaitExtensionTool } from './extension-tool.ts'
 import { createWaitGuardListener } from './intercept.ts'
 import { describeWaitBudget } from './limits.ts'
 import { SessionWaitLimits } from './session-limits.ts'
-import { LimitTimeoutSettingsSchema, validateLimitTimeoutSettings } from './settings.ts'
-import { DEFAULT_SETTINGS, PLUGIN_ID, type LimitTimeoutSettings } from './shared.ts'
+import { Config as LimitTimeoutConfig, type LimitTimeoutConfig as LimitTimeoutConfigType, validateLimitTimeoutSettings } from './settings.ts'
+import { PLUGIN_ID, type LimitTimeoutSettings } from './shared.ts'
+
+export { Config } from './settings.ts'
 import { createSuppressReminderListener } from './suppress.ts'
 
 export const name = PLUGIN_ID
@@ -35,27 +37,25 @@ const WAIT_BUDGET_CONTEXT_ORDER = 117
  * 装载设置绑定, 拦截器, 申请工具与提示说明.
  * @param ctx - Host 插件上下文.
  */
-export function apply(ctx: Context): void {
+export function apply(ctx: Context, config: LimitTimeoutConfigType): void {
   const sessionLimits = new SessionWaitLimits()
-  // 未挂载 settings 服务时用默认值工作, 插件不会因为缺少设置provider而消失.
-  let settings: LimitTimeoutSettings = { ...DEFAULT_SETTINGS }
-
-  ctx.inject(['settings'], (settingsCtx) => {
-    const owner = settingsCtx.settings.register(PLUGIN_ID, LimitTimeoutSettingsSchema, {
-      validate: validateLimitTimeoutSettings,
-    })
-    const sync = (): void => { settings = owner.get() }
-    sync()
-    owner.watch(sync)
-    ctx.logger.info(
-      '%s: settings bound (defaultLimitMs=%d ms, hardLimitMs=%d ms, allowEscalation=%s, requireExplicitJobWaitMs=%s)',
-      PLUGIN_ID,
-      settings.defaultLimitMs,
-      settings.hardLimitMs,
-      String(settings.allowEscalation),
-      String(settings.requireExplicitJobWaitMs),
-    )
+  const readSettings = (): LimitTimeoutSettings => ({
+    defaultLimitMs: config.defaultLimitMs.get(),
+    hardLimitMs: config.hardLimitMs.get(),
+    allowEscalation: config.allowEscalation.get(),
+    requireExplicitJobWaitMs: config.requireExplicitJobWaitMs.get(),
+    suppressRepeatToolReminders: config.suppressRepeatToolReminders.get(),
   })
+  validateLimitTimeoutSettings(readSettings())
+  const initial = readSettings()
+  ctx.logger.info(
+    '%s: settings bound (defaultLimitMs=%d ms, hardLimitMs=%d ms, allowEscalation=%s, requireExplicitJobWaitMs=%s)',
+    PLUGIN_ID,
+    initial.defaultLimitMs,
+    initial.hardLimitMs,
+    String(initial.allowEscalation),
+    String(initial.requireExplicitJobWaitMs),
+  )
 
   ctx.inject(['systemPrompt'], (promptCtx) => {
     promptCtx.systemPrompt.context({
@@ -65,9 +65,10 @@ export function apply(ctx: Context): void {
         // AssembleContext 的公开声明尚未包含 agent, 运行时与官方 policy 插件
         // 一致地携带当前会话; 没有会话时 (裸 assemble) 不声明任何事实.
         const session = (context as { agent?: Agent }).agent?.session
+        const current = readSettings()
         const raised = sessionLimits.grantOf(session) !== undefined
-        const sessionLimitMs = sessionLimits.limitOf(session, settings.defaultLimitMs, settings.hardLimitMs)
-        return describeWaitBudget({ settings, sessionLimitMs, raised })
+        const sessionLimitMs = sessionLimits.limitOf(session, current.defaultLimitMs, current.hardLimitMs)
+        return describeWaitBudget({ settings: current, sessionLimitMs, raised })
       },
     })
   })
@@ -75,13 +76,13 @@ export function apply(ctx: Context): void {
   const log = (message: string): void => { ctx.logger.info('%s: %s', PLUGIN_ID, message) }
 
   ctx.tools.register(createRequestWaitExtensionTool(ctx, {
-    settings: () => settings,
+    settings: readSettings,
     sessionLimits,
     log,
   }))
 
   ctx.on('tools/pre-execute', createWaitGuardListener({
-    settings: () => settings,
+    settings: readSettings,
     sessionLimits,
     log,
   }))
@@ -89,7 +90,7 @@ export function apply(ctx: Context): void {
   // 重复工具调用提醒由别的插件在 post-execute 附加, 这里在进入模型请求前按
   // 设置过滤掉, 只影响模型看到的内容, 不改写会话日志.
   ctx.on('agent/pre-step', createSuppressReminderListener({
-    settings: () => settings,
+    settings: readSettings,
     log: message => { ctx.logger.debug('%s: %s', PLUGIN_ID, message) },
   }))
 

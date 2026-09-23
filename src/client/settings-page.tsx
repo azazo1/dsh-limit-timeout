@@ -5,7 +5,7 @@
  * @module dsh-limit-timeout/client/settings-page
  */
 
-import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { ConfigForm as SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
 import {
   ALLOW_ESCALATION_FIELD,
   DEFAULT_HARD_LIMIT_MS,

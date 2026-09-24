@@ -22,6 +22,11 @@ export default defineConfig({
     intro: 'var module = { exports: {} }; var exports = module.exports;',
   },
   deps: {
-    neverBundle: ['react', 'react/jsx-runtime'],
+    // 平台模块表里的模块: 运行时由 loader 的 require 提供, 不打进本 bundle.
+    neverBundle: [
+      'react',
+      'react/jsx-runtime',
+      '@deepseek-ai/dsh-client-ui-primitives',
+    ],
   },
 })

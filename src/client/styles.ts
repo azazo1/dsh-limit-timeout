@@ -7,8 +7,6 @@
 /** 样式标签标记. */
 const STYLE_ID = 'dsh-limit-timeout-client'
 
-/** 通用设置行的类名. */
-export const ROW_CLASS = 'dsh-lt-row'
 /** 通用设置行的文案容器类名. */
 export const ROW_COPY_CLASS = 'dsh-lt-row-copy'
 /** 字段标题类名. */
@@ -43,7 +41,6 @@ export const ERROR_CLASS = 'dsh-lt-error'
 export const HINT_CLASS = 'dsh-lt-hint'
 
 const CSS_TEXT = `
-.${ROW_CLASS} { display: flex; align-items: center; gap: 8px; padding: 16px 0; border-bottom: 1px solid var(--dsw-alias-border-l2); }
 .${ROW_COPY_CLASS} { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
 .${TITLE_CLASS} { font-size: 13px; font-weight: 500; color: var(--dsw-alias-label-primary); }
 .${DESC_CLASS} { font-size: 12px; line-height: 1.6; color: var(--dsw-alias-label-tertiary); }
@@ -68,7 +65,6 @@ const CSS_TEXT = `
 .${HINT_CLASS} { margin: 0; padding: 0 0 0 16px; font-size: 12px; line-height: 1.7; color: var(--dsw-alias-label-tertiary); }
 .${HINT_CLASS} code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--dsw-alias-label-primary); }
 @media (max-width: 560px) {
-  .${ROW_CLASS} { flex-direction: column; align-items: stretch; }
   .${INPUT_CLASS} { width: 100%; }
 }
 `

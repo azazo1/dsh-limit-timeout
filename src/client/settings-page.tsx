@@ -64,8 +64,7 @@ export function LimitTimeoutSection({ scope }: LimitTimeoutSectionProps): React.
           <div className={ROW_COPY_CLASS}>
             <div className={TITLE_CLASS}>全局默认等待上限</div>
             <div className={DESC_CLASS}>
-              支持 120000, 90s, 2m, 1h 等写法, 省略单位按毫秒. 默认 {formatMsHint(DEFAULT_LIMIT_MS)},
-              与 General 设置里的那一行是同一个值.
+              支持 120000, 90s, 2m, 1h 等写法, 省略单位按毫秒. 默认 {formatMsHint(DEFAULT_LIMIT_MS)}.
             </div>
           </div>
           <DurationInput
